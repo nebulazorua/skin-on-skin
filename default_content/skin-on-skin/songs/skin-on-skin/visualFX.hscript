@@ -18,10 +18,28 @@ zoom.data.angle.value = [0];
 zoom.data.mirrorX.value = [false];
 zoom.data.mirrorY.value = [true];
 
+importClass("openfl.system.System");
 importClass("openfl.filters.ShaderFilter");
 importClass("flixel.math.FlxMath");
 
+function checkShaders(){
+    if(ClientPrefs.shaders == 'None'){
+        System.exit(0);
+    }else{
+        game.camGame.setFilters([new ShaderFilter(barrel), new ShaderFilter(bloom)]);
+        game.camHUD.setFilters([new ShaderFilter(zoom)]);
+    }
+}
+
+function optionsChanged(options){
+    if(options.contains("shaders")){
+        checkShaders();
+    }
+}
+
 function onUpdate(elapsed){
+    
+
     bloom.data.Intensity.value[0] = modManager.getValue("bloom", 0);
     barrel.data.chromaticIntensity.value[0] = modManager.getValue("chromatic", 0);
     barrel.data.distortionIntensity.value[0] = modManager.getValue("barrel", 0);
@@ -34,8 +52,7 @@ function onUpdate(elapsed){
 }
 
 function onCreatePost(){
-    game.camGame.setFilters([new ShaderFilter(barrel), new ShaderFilter(bloom)]);
-    game.camHUD.setFilters([new ShaderFilter(zoom)]);
+    checkShaders();
     if(game.hud.healthBar != null){
         game.hud.healthBar.visible = false;
     }
