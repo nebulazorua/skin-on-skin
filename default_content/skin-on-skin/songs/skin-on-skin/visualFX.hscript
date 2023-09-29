@@ -1,0 +1,289 @@
+var barrel = newShader("barrel");
+barrel.data.chromaticIntensity.value = [1.0];
+barrel.data.distortionIntensity.value = [0.5];
+barrel.data.offset.value = [0, 0];
+barrel.data.angle.value = [0];
+barrel.data.mirrorX.value = [true];
+barrel.data.mirrorY.value = [true];
+barrel.data.zoom.value=[1.0];
+
+var bloom = newShader("bloom");
+bloom.data.Threshold.value = [0.15];
+bloom.data.Intensity.value = [0.0];
+
+var zoom = newShader("zoom");
+zoom.data.zoom.value=[1];
+zoom.data.offset.value = [0, 0];
+zoom.data.angle.value = [0];
+zoom.data.mirrorX.value = [false];
+zoom.data.mirrorY.value = [true];
+
+importClass("openfl.filters.ShaderFilter");
+importClass("flixel.math.FlxMath");
+
+function onUpdate(elapsed){
+    bloom.data.Intensity.value[0] = modManager.getValue("bloom", 0);
+    barrel.data.chromaticIntensity.value[0] = modManager.getValue("chromatic", 0);
+    barrel.data.distortionIntensity.value[0] = modManager.getValue("barrel", 0);
+    barrel.data.zoom.value[0] = modManager.getValue("zoom", 0);
+    zoom.data.zoom.value[0] = modManager.getValue("zoom", 0);
+
+    //zoom.data.angle.value[0] += elapsed * 25;
+    //barrel.data.angle.value[0] += elapsed * 100;
+    //zoom.data.offset.value[1] += elapsed * 150;
+}
+
+function onCreatePost(){
+    game.camGame.setFilters([new ShaderFilter(barrel), new ShaderFilter(bloom)]);
+    game.camHUD.setFilters([new ShaderFilter(zoom)]);
+    if(game.hud.healthBar != null){
+        game.hud.healthBar.visible = false;
+    }
+    game.camZooming = true;
+    game.zoomEveryBeat = 0;
+    
+}
+
+function addBlankMod(modName, defaultVal){
+    modManager.registerAux(modName);
+	modManager.setValue(modName, defaultVal);
+}
+
+
+function generateModchart(){
+    game.remove(game.botplayTxt);
+    addBlankMod("bloom", 0);
+    addBlankMod("chromatic", 1.0);
+    addBlankMod("barrel", -0.25);
+    addBlankMod("zoom", 1);
+    
+    modManager.queueSet(-32, "alpha", 1);
+    modManager.queueSet(-32, "opponentSwap", 0.5);
+    modManager.queueSet(-32, "flip", -0.25);
+
+    modManager.queueEase(0, 128, "alpha", 0, 0);
+
+    modManager.queueEase(0, 128, "center0rotateY", -33.75);
+    modManager.queueEase(0, 128, "center1rotateY", -16.875);
+    modManager.queueEase(0, 128, "center2rotateY", 16.875);
+    modManager.queueEase(0, 128, "center3rotateY", 33.75);
+
+    modManager.queueEase(0, 128, "confusionYOffset0", -33.75);
+    modManager.queueEase(0, 128, "confusionYOffset1", -16.875);
+    modManager.queueEase(0, 128, "confusionYOffset2", 16.875);
+    modManager.queueEase(0, 128, "confusionYOffset3", 33.75);
+
+    modManager.queueEaseFunc(218, 222, FlxEase.quadOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(0, 240, val);
+    });
+
+    modManager.queueEaseFunc(220, 226, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(120, -1280 * 2, val);
+    });
+
+    modManager.queueFuncOnce(226, function(ev, step){
+        barrel.data.offset.value[0] = 0;
+        barrel.data.offset.value[1] = 0;
+        barrel.data.angle.value[0] = 0;
+    });
+
+    modManager.queueEaseFunc(264, 270, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(-480, 1280, val);
+    });
+
+    modManager.queueEaseFunc(260, 266, FlxEase.quadOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(0, -480, val);
+    });
+
+    modManager.queueEaseFunc(264, 270, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(-480, 1280, val);
+    });
+
+    modManager.queueEaseFunc(270, 274, FlxEase.quadIn, function(ev, val, step){
+        barrel.data.angle.value[0] = FlxMath.lerp(0, -20, val);
+    });
+
+    modManager.queueEaseFunc(274, 276, FlxEase.linear, function(ev, val, step){
+        barrel.data.angle.value[0] = FlxMath.lerp(-20, -30, val);
+    });
+
+    modManager.queueEaseFunc(276, 278, FlxEase.linear, function(ev, val, step){
+        barrel.data.angle.value[0] = FlxMath.lerp(-30, -40, val);
+    });
+
+    modManager.queueEaseFunc(280, 284, FlxEase.quadOut, function(ev, val, step){
+        barrel.data.angle.value[0] = FlxMath.lerp(-40, 180, val);
+    });
+
+    modManager.queueEaseFunc(284, 286, FlxEase.quadOut, function(ev, val, step){
+        barrel.data.offset.value[1] = FlxMath.lerp(0, 720, val);
+    });
+
+    modManager.queueFuncOnce(286, function(ev, step){
+        barrel.data.offset.value[0] = 0;
+        barrel.data.offset.value[1] = 0;
+        barrel.data.angle.value[0] = 0;
+    });
+
+    modManager.queueFuncOnce(288, function(ev, step){
+        barrel.data.angle.value[0] = 45;
+    });
+
+    modManager.queueFuncOnce(290, function(ev, step){
+        barrel.data.angle.value[0] = 90;
+    });
+
+    modManager.queueFuncOnce(292, function(ev, step){
+        barrel.data.angle.value[0] = 135;
+    });
+
+    modManager.queueFuncOnce(294, function(ev, step){
+        barrel.data.angle.value[0] = 45;
+    });
+
+    modManager.queueFuncOnce(296, function(ev, step){
+        barrel.data.angle.value[0] = 90;
+    });
+
+    modManager.queueFuncOnce(298, function(ev, step){
+        barrel.data.angle.value[0] = 135;
+    });
+
+    modManager.queueFuncOnce(300, function(ev, step){
+        barrel.data.angle.value[0] = 180;
+    });
+
+    modManager.queueFuncOnce(302, function(ev, step){
+        barrel.data.angle.value[0] = 225;
+    });
+
+    modManager.queueFuncOnce(304, function(ev, step){
+        barrel.data.angle.value[0] = 270;
+    });
+
+    modManager.queueFuncOnce(306, function(ev, step){
+        barrel.data.angle.value[0] = 315;
+    });
+
+    modManager.queueFuncOnce(308, function(ev, step){
+        barrel.data.angle.value[0] = 0;
+    });
+
+    modManager.queueEaseFunc(474, 478, FlxEase.quadOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(0, 240, val);
+    });
+
+    modManager.queueEaseFunc(476, 480, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(120, -1280 * 2, val);
+    });
+
+    modManager.queueFuncOnce(480, function(ev, step){
+        barrel.data.offset.value[0] = 0;
+    });
+
+    modManager.queueEaseFunc(512, 516, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(0, 1280, val);
+        zoom.data.offset.value[0] = FlxMath.lerp(0, 1280, val);
+    });
+
+    modManager.queueEaseFunc(520, 524, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[1] = FlxMath.lerp(0, 720, val);
+        zoom.data.offset.value[1] = FlxMath.lerp(0, 720, val);
+    });
+
+    modManager.queueEaseFunc(526, 530, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(1280, 2560, val);
+        zoom.data.offset.value[0] = FlxMath.lerp(1280, 2560, val);
+    });
+
+    modManager.queueEaseFunc(536, 540, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[1] = FlxMath.lerp(720, 1440, val);
+        zoom.data.offset.value[1] = FlxMath.lerp(720, 1440, val);
+    });
+
+    modManager.queueEaseFunc(544, 548, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(2560, 1280, val);
+        zoom.data.offset.value[0] = FlxMath.lerp(2560, 1280, val);
+    });
+
+    modManager.queueEaseFunc(552, 556, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[1] = FlxMath.lerp(1440, 2160, val);
+        zoom.data.offset.value[1] = FlxMath.lerp(1440, 2160, val);
+    });
+
+    modManager.queueEaseFunc(560, 564, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[0] = FlxMath.lerp(1280, 0, val);
+        zoom.data.offset.value[0] = FlxMath.lerp(1280, 0, val);
+    });
+
+    modManager.queueEaseFunc(568, 572, FlxEase.quartOut, function(ev, val, step){
+        barrel.data.offset.value[1] = FlxMath.lerp(2160, 1440, val);
+        zoom.data.offset.value[1] = FlxMath.lerp(2160, 1440, val);
+    });
+
+    var shit = Song.loadFromJson("BASS", "skin-on-skin");
+    var noteData = shit.notes;
+    var beatData = [];
+
+    for(sexion in noteData){
+        for(data in sexion.sectionNotes){
+            var time:Float = data[0];
+            var swapType:Int = Std.int(data[1] % 4);
+            var step = Conductor.getStep(time);
+
+            beatData.push([step, swapType]);
+        }
+    }
+    modManager.queueEase(374, 384, 'zoom', 0.5, 'quadIn'); 
+    modManager.queueEase(374, 384, 'barrel', 1, 'quadIn'); 
+
+    modManager.queueEase(384, 385, 'zoom', 3, 'quartOut'); 
+    modManager.queueEase(384, 385, 'barrel', -1.5, 'quartOut'); 
+    modManager.queueEase(385, 394, 'zoom', 1, 'backOut'); 
+    modManager.queueEase(385, 394, 'barrel', -0.25, 'backOut'); 
+
+    var f:Float = 1;
+
+    
+    for(d in 0...beatData.length){
+        var curr = beatData[d];
+
+        f *= -1;
+        if(curr[1] == 0){
+            modManager.queueSet(curr[0], 'bloom', 0.15);
+            modManager.queueSet(curr[0], 'chromatic', 1.15);
+            modManager.queueEase(curr[0], curr[0] + 10, 'bloom', 0, 'quadOut'); 
+            modManager.queueEase(curr[0], curr[0] + 10, 'chromatic', 1, 'quadOut'); 
+
+            modManager.queueSet(curr[0], 'barrel', -0.3);
+            modManager.queueEase(curr[0], curr[0] + 8, 'barrel', -0.25, 'quadOut'); 
+
+            modManager.queueFuncOnce(curr[0], function(ev, step){
+                game.camGame.zoom += 0.1;
+                game.camHUD.zoom += 0.05;
+            });
+        }else if(curr[1] == 1){
+            modManager.queueSet(curr[0], 'bloom', 0.5);
+            modManager.queueEase(curr[0], curr[0] + 12, 'bloom', 0, 'quadOut'); 
+            modManager.queueSet(curr[0], 'chromatic', 3);
+            modManager.queueEase(curr[0], curr[0] + 12, 'chromatic', 1, 'quadOut'); 
+            modManager.queueSet(curr[0], 'barrel', 0.25);
+            modManager.queueEase(curr[0], curr[0] + 12, 'barrel', -0.25, 'quadOut'); 
+
+            modManager.queueSet(curr[0], 'zoom', 1.25);
+            modManager.queueEase(curr[0], curr[0] + 12, 'zoom', 1, 'quadOut'); 
+
+            modManager.queueFuncOnce(curr[0], function(ev, step){
+                game.camGame.zoom += 0.5;
+                game.camHUD.zoom += 0.1;
+            });
+        }else if(curr[1] == 2){
+            var zoom = game.defaultCamZoom;
+            modManager.queueSet(curr[0], "barrel", 2);
+            modManager.queueSet(curr[0], "zoom", 3);
+            modManager.queueEase(curr[0], curr[0]+16, "barrel", -0.25, "elasticOut");
+            modManager.queueEase(curr[0], curr[0]+16, "zoom", 1, "elasticOut");
+        }
+    }
+
+}

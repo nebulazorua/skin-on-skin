@@ -1,0 +1,35 @@
+importClass("flixel.ui.FlxBar.FlxBarFillDirection");
+importClass("hud.AdvancedHUD");
+
+function onCreate(){
+    game.hud = new AdvancedHUD('dad', 'dad', PlayState.SONG.song, game.stats);
+}
+
+function onCreatePost(){
+    var hpBar = game.hud.healthBar;
+
+    game.hud.remove(hpBar);
+
+    game.hud.hitbar.y -= 100;
+    
+    var hpBarOverlay = new FlxSprite().loadGraphic(Paths.image("health-bar"));
+    hpBarOverlay.x = FlxG.width/2 - hpBarOverlay.width / 2;
+    hpBarOverlay.y = FlxG.height/2 - hpBarOverlay.height / 2;
+    hpBarOverlay.y += 280;
+    bar = new FlxBar(hpBarOverlay.x, hpBarOverlay.y,
+        "RIGHT_TO_LEFT",
+        Std.int(hpBarOverlay.width), Std.int(hpBarOverlay.height),
+        null, null,
+        0, 2);
+
+    bar.createImageBar(Paths.image("nobar"), Paths.image("geen_bar"), FlxColor.WHITE, FlxColor.WHITE);
+	bar.updateBar();
+
+    game.hud.insert(0, hpBarOverlay);
+    game.hud.insert(0, bar);
+
+}
+
+function onUpdatePost(elapsed){
+    bar.value = game.health;
+}

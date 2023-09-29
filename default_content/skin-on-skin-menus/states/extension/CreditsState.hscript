@@ -1,0 +1,7 @@
+function create(){
+    statecreate();
+    this.addSong(["Skin on Skin"]);
+    this.addSong(["Nebula the Zorua", "Nebula_Zorua", "Sprite artist and programmer", "https://twitter.com/nebula_zorua", "0xFFBA2DC4"]);
+    this.addSong(["Echolocated", "Echolocated", "Musician, menu/HUD artist", "https://twitter.com/saevwine", "0xFFBA5CF4"]);
+}
+

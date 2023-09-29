@@ -1,0 +1,145 @@
+importClass("Discord");
+importClass("FadeTransitionSubstate");
+importClass("MusicBeatState");
+importClass("LoadingState");
+importClass("options.OptionsState");
+importClass("MainMenuState");
+importClass("CreditsState");
+
+
+function onUpdatePost(elapsed:Float){
+    if (FlxG.keys.justPressed.F7)
+        FlxG.switchState(new MainMenuState());
+}
+
+var didHit = false;
+
+function playSong(metadata, ?difficulty:String, ?difficultyIdx:Int=1){
+    Paths.currentModDirectory = metadata.folder;
+
+    if (difficulty != null && (difficulty.trim()=='' || difficulty.toLowerCase().trim() == 'normal'))
+        difficulty = null;
+
+    var songLowercase:String = Paths.formatToSongPath(metadata.songName);
+
+    PlayState.SONG = Song.loadFromJson(
+        songLowercase + (difficulty == null ? "" : '-$difficulty'), 
+        songLowercase
+    );
+    PlayState.difficulty = difficultyIdx;
+    PlayState.difficultyName = difficulty;
+    PlayState.isStoryMode = false;
+
+    LoadingState.loadAndSwitchState(new PlayState());
+
+    if (FlxG.sound.music != null)
+        FlxG.sound.music.volume = 0;
+} 
+
+function hit(){
+    if(didHit)
+        return;
+
+    FlxG.sound.play(Paths.sound("press"));
+    switch(MainMenuState.curSelected){
+        case 0:
+            didHit = true;
+            playSong({"songName": "skin-on-skin", "folder": "skin-on-skin"});
+        case 1:
+            didHit = true;
+            FlxG.switchState(new OptionsState());
+        case 2:
+            didHit = true;
+            FlxG.switchState(new CreditsState());   
+    }
+}
+function onStateCreate(){
+    this.persistentUpdate = true;
+    this.persistentDraw = true;
+
+    FadeTransitionSubstate.nextCamera = FlxG.camera; // AAAA
+
+    #if desktop
+    // Updating Discord Rich Presence
+    Discord.DiscordClient.changePresence("In the Menus", null);
+    #end
+
+}
+
+var daOpts = [];
+
+
+function onStateCreatePost(){
+    FlxG.mouse.visible = true;
+    
+    var menuBG = new FlxSprite().loadGraphic(Paths.image("sosMenuBG"));
+    add(menuBG);
+
+    sosPlay = new FlxSprite(25, 75).loadGraphic(Paths.image("sos"));
+    add(sosPlay);
+
+    options = new FlxSprite(25, 300).loadGraphic(Paths.image("options"));
+    add(options);
+
+    credits = new FlxSprite(25, 475).loadGraphic(Paths.image("credits"));
+    add(credits);
+
+    playMenuMusic(1);
+    daOpts = [sosPlay, options, credits];
+
+    Paths.clearUnusedMemory();
+}
+
+function playMenuMusic(?volume:Float = 1, ?force:Bool = false){		
+    if(FlxG.sound.music == null || !FlxG.sound.music.playing || FlxG.sound.music.volume <= 0){
+        if (MusicBeatState.menuVox!=null){
+            trace("stopped menu vox");
+            MusicBeatState.menuVox.stop();
+            MusicBeatState.menuVox.destroy();
+            MusicBeatState.menuVox = null;
+        }
+        menuMusic = Paths.music('freakyMenu');
+        FlxG.sound.playMusic(Paths.music('freakyMenu'), volume, false);
+
+        Conductor.changeBPM(180);
+        Conductor.songPosition = 0;
+    }
+}
+
+function changeItem(inc:Int){
+    MainMenuState.curSelected+= inc;
+    if(MainMenuState.curSelected > 2)MainMenuState.curSelected = 0;
+    if(MainMenuState.curSelected < 0)MainMenuState.curSelected = 2;
+
+    FlxG.sound.play(Paths.sound("select"));
+}
+
+function onUpdate(elapsed:Float){
+    if(FlxG.keys.justPressed.ENTER)
+        hit();
+
+    if(FlxG.keys.justPressed.DOWN){
+        changeItem(1);
+    }
+    
+    if(FlxG.keys.justPressed.UP){
+        changeItem(-1);
+    }
+
+    var selected = MainMenuState.curSelected;
+    var lerpVal = 0.2 * (FlxG.elapsed / (1 / 60));
+
+    for(i in 0...daOpts.length){
+        var o = daOpts[i];
+        if(i == selected){
+            o.scale.x = FlxMath.lerp(o.scale.x, 1, lerpVal);
+            o.scale.y = FlxMath.lerp(o.scale.y, 1, lerpVal);
+            o.color = FlxColor.interpolate(o.color, FlxColor.WHITE, lerpVal);
+        }else{
+            o.scale.x = FlxMath.lerp(o.scale.x, 0.8, lerpVal);
+            o.scale.y = FlxMath.lerp(o.scale.y, 0.8, lerpVal);
+            o.color = FlxColor.interpolate(o.color, FlxColor.GRAY, lerpVal);
+        }
+        o.updateHitbox();
+    } 
+}

@@ -1,0 +1,19 @@
+function onLoad()
+{
+	var ground = new FlxSprite(-100, 150).loadGraphic(Paths.image("skinbg"));
+	stage.add(ground);
+
+    shadow = new FlxSprite(-100, 150).loadGraphic(Paths.image("shad"));
+	stage.add(shadow);
+}
+
+var inst = getInstance();
+function onCreatePost(){
+    var cam = inst.boyfriend.getCamera();
+    inst.camFollow.set(cam[0], cam[1]);
+    inst.sectionCamera.set(inst.camFollow.x, inst.camFollow.y);
+    inst.camFollowPos.setPosition(inst.camFollow.x, inst.camFollow.y);
+
+    shadow.x = inst.boyfriend.x - 10;
+    shadow.y = inst.boyfriend.y + 320;
+}

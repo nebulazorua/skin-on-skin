@@ -1,0 +1,15 @@
+{
+    "runsGlobally": true,
+	"freeplaySongs": [
+		{
+			"name": "Skin On Skin",
+			"category": "skinonskin"
+		}
+	],
+    "freeplayCategories": [
+        {
+            "name": "Skin on Skin",
+            "id": "skinonskin"
+        }
+    ]
+}

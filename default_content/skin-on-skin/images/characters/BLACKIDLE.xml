@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="BLACKIDLE.png">
+	<!-- Created with Adobe Animate version 21.0.5.40714 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="idle0000" x="2" y="2" width="336" height="462"/>
+	<SubTexture name="idle0001" x="2" y="2" width="336" height="462"/>
+	<SubTexture name="idle0002" x="2" y="466" width="336" height="462"/>
+	<SubTexture name="idle0003" x="2" y="466" width="336" height="462"/>
+	<SubTexture name="idle0004" x="340" y="2" width="336" height="462"/>
+	<SubTexture name="idle0005" x="340" y="2" width="336" height="462"/>
+	<SubTexture name="idle0006" x="340" y="466" width="336" height="462"/>
+	<SubTexture name="idle0007" x="340" y="466" width="336" height="462"/>
+</TextureAtlas>
