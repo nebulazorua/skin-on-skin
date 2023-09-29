@@ -22,7 +22,7 @@ class StartupState extends FlxState
 	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
-	public static var fullscreenKeys:Array<FlxKey> = [FlxKey.F11];
+	public static var fullscreenKeys:Array<FlxKey> = [];
 
 	private static final nextState:Class<FlxState> = MainMenuState;//TestingState;
 
@@ -64,23 +64,10 @@ class StartupState extends FlxState
 				// Prevent Flixel from listening to key inputs when switching fullscreen mode
 				if (e.keyCode == FlxKey.ENTER && e.altKey)
 					e.stopImmediatePropagation();
-
-				// Also add F11 to switch fullscreen mode
-				if (fullscreenKeys.contains(e.keyCode)){
-					FlxG.fullscreen = !FlxG.fullscreen;
-					e.stopImmediatePropagation();
-				}
+                
 			}, 
 			false, 
-			100
-		);
-
-		FlxG.stage.addEventListener(
-			openfl.events.FullScreenEvent.FULL_SCREEN, 
-			(e)->{
-				if(FlxG.save.data != null)
-					FlxG.save.data.fullscreen = e.fullScreen;
-			}
+			10000
 		);
 		#end
 

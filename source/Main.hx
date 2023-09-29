@@ -127,12 +127,9 @@ class Main extends Sprite
 		}else{
 			@:privateAccess
 			FlxG.initSave();
-
-			if (FlxG.save.data != null && FlxG.save.data.fullscreen != null)
-				startFullscreen = FlxG.save.data.fullscreen;
 		}
 		
-		addChild(new FNFGame(gameWidth, gameHeight, initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen));
+		addChild(new FNFGame(gameWidth, gameHeight, initialState, #if(flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash, false));
 		
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = false;
