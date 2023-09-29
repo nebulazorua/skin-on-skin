@@ -1,0 +1,22 @@
+importClass("Discord");
+importClass("FadeTransitionSubstate");
+importClass("MusicBeatState");
+importClass("LoadingState");
+importClass("options.OptionsState");
+importClass("MainMenuState");
+importClass("CreditsState");
+
+
+function onUpdatePost(elapsed:Float){
+    if (FlxG.keys.justPressed.F7)
+        FlxG.switchState(new CreditsState());
+}
+
+function onStateCreate(){
+    add(new FlxSprite().loadGraphic(Paths.image("SKIN_ON_SKIN_CREDITS")));
+}
+
+function onUpdate(elapsed:Float){
+    if (FlxG.keys.justPressed.ESCAPE)
+        FlxG.switchState(new MainMenuState());
+}

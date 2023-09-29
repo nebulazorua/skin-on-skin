@@ -24,7 +24,7 @@ class StartupState extends FlxState
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
 	public static var fullscreenKeys:Array<FlxKey> = [FlxKey.F11];
 
-	private static final nextState:Class<FlxState> = TitleState;//TestingState;
+	private static final nextState:Class<FlxState> = MainMenuState;//TestingState;
 
     // vv wait this isnt a musicbeatstate LOL!
 /* 
@@ -234,12 +234,6 @@ class StartupState extends FlxState
 		// could be worse lol
 		switch (step){
 			case 0:
-				warning = new FlxSprite(0, 0, Paths.image("warning"));
-				warning.scale.set(0.65, 0.65);
-				warning.updateHitbox();
-				warning.screenCenter();
-				add(warning);
-
 				step = 1;
 			case 1:
 				var startTime = Sys.cpuTime();
@@ -248,30 +242,11 @@ class StartupState extends FlxState
 				if (Reflect.getProperty(nextState, "load") != null)
 					Reflect.callMethod(null, Reflect.getProperty(nextState, "load"), []);
 
-				#if debug
-				var waitTime:Float = 0;
-				#elseif sys
-				var waitTime:Float = (nextState == PlayState || nextState == editors.ChartingState) ? 0 : Math.max(0, 1.6 - (startTime - Sys.cpuTime()));
-				#else
-				var waitTime:Float = 0;
-				#end
 
-				fadeTwn = FlxTween.tween(warning, {alpha: 0}, 1, {
-					ease: FlxEase.expoIn,
-					startDelay: waitTime,
-					onComplete: (twn)->{
-						step = 5;
-					}
-				});
+				step = 2;
 
-				step = 3;
-			case 3:
-				if ((FlxG.keys.justPressed.ANY || FlxG.mouse.justPressed) && fadeTwn.percent <= 0){
-					fadeTwn.startDelay = 0;
-					step = 4;
-				}
 
-			case 5:
+			case 2:
 				#if DO_AUTO_UPDATE
 				if (Main.outOfDate)
 					MusicBeatState.switchState(new UpdaterState(recentRelease)); // UPDATE!!

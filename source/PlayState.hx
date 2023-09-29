@@ -3151,7 +3151,7 @@ class PlayState extends MusicBeatState
 		FlxTransitionableState.skipNextTransIn = false;
 		CustomFadeTransition.nextCamera = null;
 
-		MusicBeatState.switchState(isStoryMode ? new StoryMenuState() : new FreeplayState());
+		MusicBeatState.switchState(new MainMenuState());
 		
 		deathCounter = 0;
 		seenCutscene = false;
